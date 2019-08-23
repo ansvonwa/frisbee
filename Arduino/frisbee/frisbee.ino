@@ -29,7 +29,8 @@ int blue = LED_COUNT * 2 / 3;
 #define INIT_TIME 9
 #define RGB_BRIGHTNESS 127
 
-int pos1000 = 0; // 1000°
+//int pos1000 = 0; // 1000°
+long mLEDshift = 0; // LED/1024
 long lastTime = micros(); // µs
 int ledOffs; // LED
 int lastOffs; // LED
@@ -129,11 +130,13 @@ void loop() {
   long curTime = micros(); // µs = s/1000000
   int deltaT = curTime - lastTime; // µs = s/1000000
   lastTime = curTime; // ms = s/1000000
-  pos1000 -= degPerSec * deltaT / 1000; // °/1000 != (°/s * s/1000000) / 1000
-  pos1000 += 360000;
-  pos1000 %= 360000;
+  //pos1000 -= degPerSec * deltaT / 1000; // °/1000 != (°/s * s/1000000) / 1000
+  //pos1000 += 360000;
+  //pos1000 %= 360000;
+  mLEDshift -= degPerSec * deltaT * 98/703125; //1024 * 49 / 1000000 / 360;
   lastOffs = ledOffs; // LED
-  ledOffs = pos1000 * LED_COUNT / 360000; // LED
+  //ledOffs = pos1000 * LED_COUNT / 360000; // LED
+  ledOffs = ((mLEDshift + 1073766400) % (1024 * 49)) / 1024;
   int change = (ledOffs - lastOffs + LED_COUNT)%LED_COUNT;
   long AcXY = (((long) AcX)*100l/COLLISION_THRESH) * (((long) AcX)*100l/COLLISION_THRESH) + (((long) AcY)*100l/COLLISION_THRESH) * (((long) AcY)*100l/COLLISION_THRESH);
 
