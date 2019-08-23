@@ -110,6 +110,23 @@ void setup() {
 }
 
 
+int sin1024(long x) {
+  Serial.print("sin1024(");
+  Serial.print(x);
+  Serial.print(") = ");
+  x %= 1024 * 49;
+  x += 1073766400;
+  x %= 1024 * 49;
+  int sign = (x > 512 * 49) ? -1 : 1;
+  if (x > 256 * 49) x = 512*49 - x;
+  long a = x*132/1031;
+  long b = 121*x/64*x/117649;
+  Serial.println((int) (a +(- a*b/1537 + (a*b/120 - a*b/5040*b/1024)*b/262144) / 4));
+  Serial.flush();
+  delay(10);
+  return (int) (a +(- a*b/1537 + (a*b/120 - a*b/5040*b/1024)*b/262144) / 4);
+}
+
 
 void loop() {
   Wire.beginTransmission(MPU_addr);
