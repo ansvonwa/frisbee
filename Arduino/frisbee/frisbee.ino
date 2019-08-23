@@ -42,8 +42,8 @@ enum Animation {
   HueFuu,
   TwoWayRotation,
 };
-enum Animation currentAnim;
-long changeAfterXms = 15000;
+enum Animation currentAnim = HueFuu;
+long changeAfterXms = 15000000;
 long lastChangeTime = 0;
 
 boolean showCollision = true;
@@ -177,11 +177,11 @@ void loop() {
         currentAnim = RedToGreen;
         Serial.println("RedToGreen");
         break;
-      //case RedToGreen:
+      case RedToGreen:
         currentAnim = HueFuu;
         Serial.println("HueFuu");
         for (int i = 0; i < LED_COUNT; i++) {
-          strip.setPixelColor(i, random(0xffffff));
+          strip.setPixelColor(i, 0, 0, 64);
         }
         break;
       //case HueFuu:
@@ -225,15 +225,10 @@ void loop() {
       }
       break;
     case HueFuu:
-      if (change < LED_COUNT/2) {// increasing
-        for (int i = 0; i < LED_COUNT - change; i++) {
-          strip.setPixelColor(i+change, strip.getPixelColor(i));
-        }
+      for (int i = 0; i < LED_COUNT; i++) {
+        // 16725 ^= 120°
+        strip.setPixelColor(i, sin1024(1024*i)/8+127, sin1024(1024*i+16725)/8+127, sin1024(1024*i+16725*2)/8+127);
       }
-      strip.setPixelColor(3, 0, 50, 0);
-      //for (int i = 0; i < change; i++) {
-      //  strip.setPixelColor(i, random(0xffffff));
-      //}
       break;
     case TwoWayRotation:
       for (int i = 0; i < LED_COUNT; i++) {
@@ -252,3 +247,4 @@ void loop() {
   strip.show(); // Initialize all pixels to 'off'
   delay(2);
 }
+
