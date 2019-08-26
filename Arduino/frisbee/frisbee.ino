@@ -43,7 +43,7 @@ enum Animation {
   TwoWayRotation,
 };
 enum Animation currentAnim = HueFuu;
-long changeAfterXms = 15000000;
+long changeAfterXms = 15000;
 long lastChangeTime = 0;
 
 boolean showCollision = true;
@@ -111,9 +111,6 @@ void setup() {
 
 
 int sin1024(long x) {
-  Serial.print("sin1024(");
-  Serial.print(x);
-  Serial.print(") = ");
   x %= 1024 * 49;
   x += 1073766400;
   x %= 1024 * 49;
@@ -121,9 +118,6 @@ int sin1024(long x) {
   if (x > 256 * 49) x = 512*49 - x;
   long a = x*132/1031;
   long b = 121*x/64*x/117649;
-  Serial.println((int) (a +(- a*b/1537 + (a*b/120 - a*b/5040*b/1024)*b/262144) / 4));
-  Serial.flush();
-  delay(10);
   return (int) (a +(- a*b/1537 + (a*b/120 - a*b/5040*b/1024)*b/262144) / 4);
 }
 
@@ -227,7 +221,16 @@ void loop() {
     case HueFuu:
       for (int i = 0; i < LED_COUNT; i++) {
         // 16725 ^= 120°
-        strip.setPixelColor(i, sin1024(1024*i)/8+127, sin1024(1024*i+16725)/8+127, sin1024(1024*i+16725*2)/8+127);
+        {
+          int loops = 3;
+          int x = (mLEDshift - i*1024)/loops;
+          int base = GLOW_BRIGHTNESS;
+          int scale = 30;
+          int r = max(0, sin1024(x)/scale+base);
+          int g = max(0, sin1024(x+16725)/scale+base);
+          int b = max(0, sin1024(x+16725*2)/scale+base);
+          strip.setPixelColor(i, r, g, b);
+        }
       }
       break;
     case TwoWayRotation:
