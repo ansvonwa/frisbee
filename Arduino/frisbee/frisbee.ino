@@ -41,15 +41,21 @@ enum Animation {
   RedToGreen,
   HueFuu,
   TwoWayRotation,
+  SineRotation,
+  Radioactive,
+  Randots,
 };
-enum Animation currentAnim = HueFuu;
+enum Animation currentAnim = Glow;
 long changeAfterXms = 15000;
 long lastChangeTime = 0;
+long seed = 42;
+long tmp1 = 0;
 
 boolean showCollision = true;
 #define COLLISION_THRESH 30000l
 
 #define GLOW_BRIGHTNESS 17
+#define ANIM_BRIGHTNESS 64
 #define LIGHTNING_BRIGHTNESS 255
 
 
@@ -107,6 +113,19 @@ void setup() {
 
   lastTime = micros(); // µs
   lastChangeTime = lastTime;
+
+  /*Serial.println("=== RANDOM: ===");
+  randomSeed(42);
+  Serial.println(random(-2147483648, 2147483647));
+  Serial.println(random(-2147483648, 2147483647));
+  Serial.println(random(-2147483648, 2147483647));
+  randomSeed(42);
+  Serial.println(random(256));
+  Serial.println(random(256));
+  randomSeed(42);
+  Serial.println(random(256));
+  Serial.println(random(256));
+  Serial.println("===   END   ===");*/
 }
 
 
@@ -119,6 +138,13 @@ int sin1024(long x) {
   long a = x*132/1031;
   long b = 121*x/64*x/117649;
   return (int) (a +(- a*b/1537 + (a*b/120 - a*b/5040*b/1024)*b/262144) / 4);
+}
+
+void setMPixelColor(long mPos, int r, int g, int b) {
+  mPos += 21913600*LED_COUNT;
+  mPos %= 1024 * LED_COUNT;
+  strip.setPixelColor(mPos / 1024, r - r * (mPos % 1024) / 1024, g - g * (mPos % 1024) / 1024, b - b * (mPos % 1024) / 1024);
+  strip.setPixelColor((mPos / 1024 + 1) % LED_COUNT, r * (mPos % 1024) / 1024, g * (mPos % 1024) / 1024, b * (mPos % 1024) / 1024);
 }
 
 
@@ -153,14 +179,6 @@ void loop() {
 
 
   if (curTime - lastChangeTime > changeAfterXms * 1000) {
-    switch (currentAnim) {
-      case ThreeDotsRGB:
-      case Glow:
-      case RedToGreen:
-        for (int i = 0; i < LED_COUNT; i++) {
-          strip.setPixelColor(i, 0, 0, 0);
-        }
-    }
     lastChangeTime = curTime;
     switch (currentAnim) {
       case ThreeDotsRGB:
@@ -174,15 +192,24 @@ void loop() {
       case RedToGreen:
         currentAnim = HueFuu;
         Serial.println("HueFuu");
-        for (int i = 0; i < LED_COUNT; i++) {
-          strip.setPixelColor(i, 0, 0, 64);
-        }
         break;
-      //case HueFuu:
+      case HueFuu:
         currentAnim = TwoWayRotation;
         Serial.println("TwoWayRotation");
         break;
-      
+      case TwoWayRotation:
+        currentAnim = SineRotation;
+        Serial.println("SineRotation");
+        break;
+      case SineRotation:
+        currentAnim = Radioactive;
+        Serial.println("Radioactive");
+        break;
+      case Radioactive:
+        currentAnim = Randots;
+        Serial.println("Randots");
+        break;
+
       default:
         currentAnim = ThreeDotsRGB;
         Serial.println("ThreeDotsRGB");
@@ -209,13 +236,18 @@ void loop() {
       strip.setPixelColor((blue + LED_COUNT / 2) % LED_COUNT, 0, 0, RGB_BRIGHTNESS);
       break;
     case Glow:
-      for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor(i, GLOW_BRIGHTNESS, 0, 0);
+      {
+        int bright = 127;
+        int x = bright * abs(degPerSec) / 10000;// * 10 / 360;
+        if (x > bright) x = bright;
+        for (int i = 0; i < LED_COUNT; i++) {
+          strip.setPixelColor(i, GLOW_BRIGHTNESS - x * GLOW_BRIGHTNESS / bright, 0, x);
+        }
       }
       break;
     case RedToGreen:
       for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor((i+ledOffs)%LED_COUNT, i, i,  LED_COUNT-i);
+        strip.setPixelColor((i+ledOffs)%LED_COUNT, i, 0,  LED_COUNT-i);
       }
       break;
     case HueFuu:
@@ -235,7 +267,51 @@ void loop() {
       break;
     case TwoWayRotation:
       for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor((i+ledOffs)%LED_COUNT, i, LED_COUNT-i, 0);
+        strip.setPixelColor(i, 0, 0, 0);
+      }
+      {
+        int mPos = mLEDshift;
+        setMPixelColor(mPos + 1024*LED_COUNT*0/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*1/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*2/6, 0, 0, RGB_BRIGHTNESS);
+        setMPixelColor(mPos + 1024*LED_COUNT*3/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*4/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*5/6, 0, 0, RGB_BRIGHTNESS);
+      }
+      break;
+    case SineRotation:
+      for (int i = 0; i < LED_COUNT; i++) {
+        strip.setPixelColor(i, 0, 0, 0);
+      }
+      {
+        int mPos = mLEDshift;
+        int t = curTime/100;
+        setMPixelColor(mPos + LED_COUNT*sin1024(t), RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + LED_COUNT*sin1024(t) + 1024*LED_COUNT*3/6, RGB_BRIGHTNESS, 0, 0);
+        setMPixelColor(mPos + LED_COUNT*sin1024(t + 1024*LED_COUNT*1/3), 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS);
+        setMPixelColor(mPos + LED_COUNT*sin1024(t + 1024*LED_COUNT*1/3) + 1024*LED_COUNT*3/6, 0, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + LED_COUNT*sin1024(t + 1024*LED_COUNT*2/3), RGB_BRIGHTNESS, 0, RGB_BRIGHTNESS);
+        setMPixelColor(mPos + LED_COUNT*sin1024(t + 1024*LED_COUNT*2/3) + 1024*LED_COUNT*3/6, 0, 0, RGB_BRIGHTNESS);
+      }
+      break;
+    case Radioactive:
+      for (int i = 0; i < LED_COUNT; i++) {
+        strip.setPixelColor(i, ((i - mLEDshift/1024 + 16384) * 6 / LED_COUNT % 2) * ANIM_BRIGHTNESS,
+                               ((i - mLEDshift/1024 + 16384) * 6 / LED_COUNT % 2) * ANIM_BRIGHTNESS, 0);
+      }
+      break;
+    case Randots:
+      for (int i = 0; i < LED_COUNT; i++) {
+        strip.setPixelColor(i, 0, 0, 0);
+      }
+      randomSeed(seed);
+      if (curTime - tmp1 > 3*1000000) {
+        tmp1 = curTime;
+        random(1);random(1);random(1);
+        seed = random(-2147483648, 2147483647);
+      }
+      for(int i = 1; i <= 10; i++) {
+        setMPixelColor(random(1024*LED_COUNT) + mLEDshift, random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10));
       }
       break;
   }
@@ -247,7 +323,7 @@ void loop() {
       }
     }
   }
-  strip.show(); // Initialize all pixels to 'off'
+  strip.show();
   delay(2);
 }
 
