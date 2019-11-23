@@ -272,11 +272,14 @@ void loop() {
       {
         int mPos = mLEDshift;
         setMPixelColor(mPos + 1024*LED_COUNT*0/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
-        setMPixelColor(mPos + 1024*LED_COUNT*1/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*0/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*0/6, 0, 0, RGB_BRIGHTNESS);
+        setMPixelColor(mPos + 1024*LED_COUNT*2/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*2/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
         setMPixelColor(mPos + 1024*LED_COUNT*2/6, 0, 0, RGB_BRIGHTNESS);
-        setMPixelColor(mPos + 1024*LED_COUNT*3/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
+        setMPixelColor(mPos + 1024*LED_COUNT*4/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
         setMPixelColor(mPos + 1024*LED_COUNT*4/6 - curTime/1000*LED_COUNT*1024/1000, 0, RGB_BRIGHTNESS, 0);
-        setMPixelColor(mPos + 1024*LED_COUNT*5/6, 0, 0, RGB_BRIGHTNESS);
+        setMPixelColor(mPos + 1024*LED_COUNT*4/6, 0, 0, RGB_BRIGHTNESS);
       }
       break;
     case SineRotation:
