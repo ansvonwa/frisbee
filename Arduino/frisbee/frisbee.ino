@@ -44,9 +44,13 @@ enum Animation {
   SineRotation,
   Radioactive,
   Randots,
+  FadingDot,
+  Sparkling,
+  ColorByDirection,
+  ReversedDots,
 };
-enum Animation currentAnim = Glow;
-long changeAfterXms = 15000;
+enum Animation currentAnim = ThreeDotsRGB;
+long changeAfterXms = 150000;
 long lastChangeTime = 0;
 long seed = 42;
 long tmp1 = 0;
@@ -147,6 +151,21 @@ void setMPixelColor(long mPos, int r, int g, int b) {
   strip.setPixelColor((mPos / 1024 + 1) % LED_COUNT, r * (mPos % 1024) / 1024, g * (mPos % 1024) / 1024, b * (mPos % 1024) / 1024);
 }
 
+void fade(int frac = 250) {
+  if (frac > 0) {
+    for (int i = 0; i < LED_COUNT; i++) {
+      uint32_t color = strip.getPixelColor(i);
+      int red = (color >> 16) & 0xFF;
+      int green = (color >> 8) & 0xFF;
+      int blue = color & 0xFF;
+      strip.setPixelColor(i, red*frac/255, green*frac/255, blue*frac/255);
+    }
+  } else {
+    for (int i = 0; i < LED_COUNT; i++) {
+      strip.setPixelColor(i, 0, 0, 0);
+    }
+  }
+}
 
 void loop() {
   Wire.beginTransmission(MPU_addr);
@@ -209,6 +228,22 @@ void loop() {
         currentAnim = Randots;
         Serial.println("Randots");
         break;
+      case Randots:
+        currentAnim = FadingDot;
+        Serial.println("FadingDot");
+        break;
+      case FadingDot:
+        currentAnim = Sparkling;
+        Serial.println("Sparkling");
+        break;
+      case Sparkling:
+        currentAnim = ColorByDirection;
+        Serial.println("ColorByDirection");
+        break;
+      case ColorByDirection:
+        currentAnim = ReversedDots;
+        Serial.println("ReversedDots");
+        break;
 
       default:
         currentAnim = ThreeDotsRGB;
@@ -254,7 +289,7 @@ void loop() {
       for (int i = 0; i < LED_COUNT; i++) {
         // 16725 ^= 120°
         {
-          int loops = 3;
+          int loops = 6;
           int x = (mLEDshift - i*1024)/loops;
           int base = GLOW_BRIGHTNESS;
           int scale = 30;
@@ -266,9 +301,7 @@ void loop() {
       }
       break;
     case TwoWayRotation:
-      for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
+      fade(0);
       {
         int mPos = mLEDshift;
         setMPixelColor(mPos + 1024*LED_COUNT*0/6 + curTime/1000*LED_COUNT*1024/1000, RGB_BRIGHTNESS, 0, 0);
@@ -283,9 +316,7 @@ void loop() {
       }
       break;
     case SineRotation:
-      for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
+      fade(0);
       {
         int mPos = mLEDshift;
         int t = curTime/100;
@@ -304,9 +335,7 @@ void loop() {
       }
       break;
     case Randots:
-      for (int i = 0; i < LED_COUNT; i++) {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
+      fade(0);
       randomSeed(seed);
       if (curTime - tmp1 > 3*1000000) {
         tmp1 = curTime;
@@ -316,6 +345,39 @@ void loop() {
       for(int i = 1; i <= 10; i++) {
         setMPixelColor(random(1024*LED_COUNT) + mLEDshift, random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10));
       }
+      break;
+    case FadingDot:
+      fade(250);
+      strip.setPixelColor(ledOffs, 50, 100, 150);
+      break;
+    case Sparkling:
+      fade(254);
+      randomSeed(seed);
+      if (curTime - tmp1 > 100000) {
+        tmp1 = curTime;
+        random(1);random(1);random(1);
+        seed = random(-2147483648, 2147483647);
+      }
+      for(int i = 1; i <= 10; i++) {
+        setMPixelColor(random(1024*LED_COUNT) + mLEDshift, random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10));
+      }
+      break;
+    case ColorByDirection:
+      fade(245);
+      /*{
+        int rotation = degPerSec * deltaT / 10000;
+        int red = min(max(rotation, 0), 255);
+        int blue = min(max(-rotation, 0), 255);
+        int greed = min(255 - red, 255 - blue);
+        strip.setPixelColor(ledOffs, red, green, blue);
+        strip.setPixelColor((ledOffs+LED_COUNT/3)%LED_COUNT, red, green, blue);
+        strip.setPixelColor((ledOffs+LED_COUNT*2/3)%LED_COUNT, red, green, blue);
+      }*/
+      break;
+    case ReversedDots:
+      fade(0);
+      strip.setPixelColor(((mLEDshift*11/10) / 1024) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
+      strip.setPixelColor(((mLEDshift*11/10) / 1024) % LED_COUNT + LED_COUNT/2, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
       break;
   }
   if (showCollision) {
