@@ -48,6 +48,8 @@ enum Animation {
   Sparkling,
   ColorByDirection,
   ReversedDots,
+
+  NumOfAnimations
 };
 enum Animation currentAnim = ReversedDots;
 long changeAfterXms = 45000;
@@ -56,6 +58,7 @@ long seed = 42;
 long tmp1 = 0;
 
 boolean showCollision = true;
+boolean switchOnCollision = true;
 #define COLLISION_THRESH 30000l
 
 #define GLOW_BRIGHTNESS 17
@@ -383,12 +386,15 @@ void loop() {
       strip.setPixelColor((mLEDshift*11/10/1024 + 40 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS/2);
       break;
   }
-  if (showCollision) {
-    if (AcXY >= 10000) {
+  if (AcXY >= 10000) {
+    if (showCollision) {
       //for (int i = 0; i < sqrt(AcXY)/10; i++) {
       for (int i = 0; i < LED_COUNT; i++) {
         strip.setPixelColor(i, LIGHTNING_BRIGHTNESS, LIGHTNING_BRIGHTNESS, LIGHTNING_BRIGHTNESS);
       }
+    }
+    if (switchOnCollision) {
+      currentAnim = (Animation) random(NumOfAnimations);
     }
   }
   strip.show();
