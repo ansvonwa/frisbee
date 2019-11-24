@@ -49,8 +49,8 @@ enum Animation {
   ColorByDirection,
   ReversedDots,
 };
-enum Animation currentAnim = ThreeDotsRGB;
-long changeAfterXms = 150000;
+enum Animation currentAnim = ReversedDots;
+long changeAfterXms = 45000;
 long lastChangeTime = 0;
 long seed = 42;
 long tmp1 = 0;
@@ -364,7 +364,7 @@ void loop() {
       break;
     case ColorByDirection:
       fade(245);
-      /*{
+      {
         int rotation = degPerSec * deltaT / 10000;
         int red = min(max(rotation, 0), 255);
         int blue = min(max(-rotation, 0), 255);
@@ -372,12 +372,15 @@ void loop() {
         strip.setPixelColor(ledOffs, red, green, blue);
         strip.setPixelColor((ledOffs+LED_COUNT/3)%LED_COUNT, red, green, blue);
         strip.setPixelColor((ledOffs+LED_COUNT*2/3)%LED_COUNT, red, green, blue);
-      }*/
+      }
       break;
     case ReversedDots:
       fade(0);
-      strip.setPixelColor(((mLEDshift*11/10) / 1024) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
-      strip.setPixelColor(((mLEDshift*11/10) / 1024) % LED_COUNT + LED_COUNT/2, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
+      strip.setPixelColor((mLEDshift*11/10/1024 + 00 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
+      strip.setPixelColor((mLEDshift*11/10/1024 + 10 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS);
+      strip.setPixelColor((mLEDshift*11/10/1024 + 20 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS/3, 0);
+      strip.setPixelColor((mLEDshift*11/10/1024 + 30 + 16384) % LED_COUNT, RGB_BRIGHTNESS, 0, RGB_BRIGHTNESS);
+      strip.setPixelColor((mLEDshift*11/10/1024 + 40 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS/2);
       break;
   }
   if (showCollision) {
