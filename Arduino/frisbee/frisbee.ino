@@ -58,7 +58,7 @@ long seed = 42;
 long tmp1 = 0;
 
 boolean showCollision = true;
-boolean switchOnCollision = true;
+boolean switchOnCollision = false;
 #define COLLISION_THRESH 30000l
 
 #define GLOW_BRIGHTNESS 17
@@ -366,7 +366,7 @@ void loop() {
       }
       break;
     case ColorByDirection:
-      fade(245);
+      fade(240);
       {
         int rotation = degPerSec * deltaT / 10000;
         int red = min(max(rotation, 0), 255);
@@ -395,6 +395,7 @@ void loop() {
     }
     if (switchOnCollision) {
       currentAnim = (Animation) random(NumOfAnimations);
+      lastChangeTime = curTime;
     }
   }
   strip.show();
