@@ -1,9 +1,12 @@
 # About
 This is the documentation and implementation of a frisbee with an LED stripe to play at night.
 
+<p><img src="imgs/animation-three-dots-rgb.jpg" width="33%"/><img src="imgs/animation-three-dots-rgb-after-collision.jpg" width="33%"/><img src="imgs/animation-blue-to-yellow-aka-red-to-green.jpg" width="33%"/></p>
 
 
 # Hardware
+<p><img src="imgs/no-cover.jpg" height="300"/><img src="imgs/no-cover-old.jpg" height="300"/></p>
+
 ## Parts
 - *Eurodisc 175g* (polyethylene), http://www.eurodisc.biz/wp-content/uploads/Summer_175g_600.jpg
 - LiPo *Battery*, 950mAh, take the one from your old mobile
