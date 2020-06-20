@@ -76,6 +76,8 @@ void setup() {
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 
+  CP_setup();
+
   for (int i = 0; i < INIT_TIME; i++) {// wait for INIT_TIME sec to increase chances of successful upload
     strip.setPixelColor(0, 32, 0, 0);
     strip.show();
@@ -400,5 +402,6 @@ void loop() {
   }
   strip.show();
   delay(2);
+  CP_loop();
 }
 
