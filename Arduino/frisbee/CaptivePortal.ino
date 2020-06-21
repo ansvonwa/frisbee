@@ -33,7 +33,7 @@ String responseHTML = String("") +
                    "</p></body></html>";
 
 void CP_setup() {
-  WiFi.mode(WIFI_AP);
+  WiFi.mode(WIFI_AP_STA);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
   WiFi.softAP("Frisbee Settings");
 
