@@ -70,6 +70,31 @@ boolean switchOnCollision = false;
 const int MPU_addr=0x68;  // I2C address of the MPU-6050
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
+
+void err(uint32_t color, int seconds = 10) {
+  Serial.print("error blink with color ");
+  Serial.print(color);
+  Serial.print(" for ");
+  Serial.print(seconds);
+  Serial.println(" seconds.");
+
+  int r = color >> 16;
+  int g = (color >> 8) & 0xFF;
+  int b = color & 0xFF;
+
+  for (int s = 0; s < seconds; s++) {
+    for (int i = 0; i < LED_COUNT; i++)
+      strip.setPixelColor(i, r, g, b);
+    strip.show();
+    delay(500);
+    for (int i = 0; i < LED_COUNT; i++)
+      strip.setPixelColor(i, 0, 0, 0);
+    strip.show();
+    delay(500);
+  }
+}
+
+
 void setup() {
   WiFi.mode(WIFI_OFF);
   
@@ -119,6 +144,7 @@ void setup() {
   Serial.println(GYRO_CONFIG);
   Serial.print("ACCEL_CONFIG: ");
   Serial.println(ACCEL_CONFIG);
+  if (GYRO_CONFIG == -1 || ACCEL_CONFIG == -1) err(0x7f0000); // Sensor setup failed, maybe hardware issue.
 
   lastTime = micros(); // µs
   lastChangeTime = lastTime;
