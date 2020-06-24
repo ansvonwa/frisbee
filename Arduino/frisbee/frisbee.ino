@@ -374,15 +374,15 @@ void loop() {
       }
       break;
     case Randots:
-      fade(0);
+      fade(100);
       randomSeed(seed);
-      if (curTime - tmp1 > 3*1000000) {
+      if (curTime - tmp1 > 15*1000000) {
         tmp1 = curTime;
         random(1);random(1);random(1);
         seed = random(-2147483648, 2147483647);
       }
-      for(int i = 1; i <= 10; i++) {
-        setMPixelColor(random(1024*LED_COUNT) + mLEDshift, random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10), random(RGB_BRIGHTNESS*i/10));
+      for(long pos = mLEDshift; pos <= mLEDshift + 1024*(LED_COUNT-2); pos += 2048+random(1024*LED_COUNT/8)) {
+        setMPixelColor(pos, random(RGB_BRIGHTNESS), random(RGB_BRIGHTNESS), random(RGB_BRIGHTNESS));
       }
       break;
     case FadingDot:
