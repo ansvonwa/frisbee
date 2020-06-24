@@ -32,6 +32,8 @@ String responseHTML = String("") +
                    "<a href=\"/anim/" + ReversedDots + "\">ReversedDots</a><br/>" +
                    "</p></body></html>";
 
+bool _CP_running = false;
+
 void CP_setup() {
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
@@ -55,11 +57,18 @@ void CP_setup() {
     }
   });
   webServer.begin();
+  _CP_running = true;
 }
 
-void CP_loop() {
-  dnsServer.processNextRequest();
-  webServer.handleClient();
+inline bool CP_running() {
+  return _CP_running;
+}
+
+inline void CP_loop() {
+  if (_CP_running) {
+    dnsServer.processNextRequest();
+    webServer.handleClient();
+  }
 }
 
 

@@ -32,6 +32,8 @@ int blue = LED_COUNT * 2 / 3;
 //int pos1000 = 0; // 1000°
 long mLEDshift = 0; // LED/1024
 long lastTime = micros(); // µs
+long firstLoopTime = lastTime; // µs
+int32_t nIter = 0;
 int ledOffs; // LED
 int lastOffs; // LED
 
@@ -101,7 +103,9 @@ void setup() {
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 
-  CP_setup();
+  OTA_setup();
+  if (!OTA_running())
+    CP_setup();
 
   for (int i = 0; i < INIT_TIME; i++) {// wait for INIT_TIME sec to increase chances of successful upload
     strip.setPixelColor(0, 32, 0, 0);
@@ -146,8 +150,12 @@ void setup() {
   Serial.println(ACCEL_CONFIG);
   if (GYRO_CONFIG == -1 || ACCEL_CONFIG == -1) err(0x7f0000); // Sensor setup failed, maybe hardware issue.
 
+  if (!OTA_running() && !CP_running)
+    CP_setup();
+
   lastTime = micros(); // µs
   lastChangeTime = lastTime;
+  firstLoopTime = lastTime;
 
   /*Serial.println("=== RANDOM: ===");
   randomSeed(42);
@@ -427,7 +435,21 @@ void loop() {
     }
   }
   strip.show();
-  delay(2);
+  OTA_loop();
+  if (!OTA_running && !CP_running)
+    CP_setup();
   CP_loop();
+  delay(2); // ms
+
+  nIter++;
+  if (nIter % 100 == 0) {
+    Serial.print("Iteration ");
+    Serial.print(nIter);
+    Serial.print(" ended at time ");
+    Serial.print(curTime);
+    Serial.print(". Avg time: ");
+    Serial.print((curTime - firstLoopTime) / nIter);
+    Serial.println("µs / iteration.");
+  }
 }
 
