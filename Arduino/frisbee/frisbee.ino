@@ -102,16 +102,18 @@ void setup() {
   
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
+  strip.setPixelColor(0, 32, 0, 0); // begin boot animation before wifi setup
+  strip.show();
 
   OTA_setup();
   if (!OTA_running())
     CP_setup();
 
   for (int i = 0; i < INIT_TIME; i++) {// wait for INIT_TIME sec to increase chances of successful upload
-    strip.setPixelColor(0, 32, 0, 0);
+    strip.setPixelColor(0, 0, 0, 0);
     strip.show();
     delay(500);
-    strip.setPixelColor(0, 0, 0, 0);
+    strip.setPixelColor(0, 32, 0, 0);
     strip.show();
     delay(500);
   }
