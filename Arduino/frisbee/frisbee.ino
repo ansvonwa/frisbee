@@ -409,7 +409,7 @@ void loop() {
         int rotation = degPerSec * deltaT / 10000;
         int red = min(max(rotation, 0), 255);
         int blue = min(max(-rotation, 0), 255);
-        int greed = min(255 - red, 255 - blue);
+        int green = min(255 - red, 255 - blue);
         strip.setPixelColor(ledOffs, red, green, blue);
         strip.setPixelColor((ledOffs+LED_COUNT/3)%LED_COUNT, red, green, blue);
         strip.setPixelColor((ledOffs+LED_COUNT*2/3)%LED_COUNT, red, green, blue);
