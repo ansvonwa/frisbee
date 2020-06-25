@@ -417,11 +417,11 @@ void loop() {
       break;
     case ReversedDots:
       fade(0);
-      strip.setPixelColor((mLEDshift*11/10/1024 + 00 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
-      strip.setPixelColor((mLEDshift*11/10/1024 + 10 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS);
-      strip.setPixelColor((mLEDshift*11/10/1024 + 20 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS/3, 0);
-      strip.setPixelColor((mLEDshift*11/10/1024 + 30 + 16384) % LED_COUNT, RGB_BRIGHTNESS, 0, RGB_BRIGHTNESS);
-      strip.setPixelColor((mLEDshift*11/10/1024 + 40 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS/2);
+      strip.setPixelColor((mLEDshift*12/10/1024 + 00 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS, 0);
+      strip.setPixelColor((mLEDshift*12/10/1024 + 10 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS);
+      strip.setPixelColor((mLEDshift*12/10/1024 + 20 + 16384) % LED_COUNT, RGB_BRIGHTNESS, RGB_BRIGHTNESS/3, 0);
+      strip.setPixelColor((mLEDshift*12/10/1024 + 30 + 16384) % LED_COUNT, RGB_BRIGHTNESS, 0, RGB_BRIGHTNESS);
+      strip.setPixelColor((mLEDshift*12/10/1024 + 40 + 16384) % LED_COUNT, 0, RGB_BRIGHTNESS, RGB_BRIGHTNESS/2);
       break;
   }
   if (AcXY >= 10000) {
