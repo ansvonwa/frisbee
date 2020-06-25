@@ -106,8 +106,6 @@ void setup() {
   strip.show();
 
   OTA_setup();
-  if (!OTA_running())
-    CP_setup();
 
   for (int i = 0; i < INIT_TIME; i++) {// wait for INIT_TIME sec to increase chances of successful upload
     strip.setPixelColor(0, 0, 0, 0);
@@ -152,7 +150,7 @@ void setup() {
   Serial.println(ACCEL_CONFIG);
   if (GYRO_CONFIG == -1 || ACCEL_CONFIG == -1) err(0x7f0000); // Sensor setup failed, maybe hardware issue.
 
-  if (!OTA_running() && !CP_running)
+  if (!OTA_check())
     CP_setup();
 
   lastTime = micros(); // µs

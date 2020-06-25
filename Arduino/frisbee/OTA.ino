@@ -11,10 +11,6 @@ void OTA_setup() {
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! No OTA this time...");
-    return;
-  }
 
   ArduinoOTA.setHostname("Frisbee");
   ArduinoOTA.setPassword(NULL);
@@ -48,6 +44,15 @@ void OTA_setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   _OTA_running = true;
+}
+
+inline bool OTA_check() {
+  if (WiFi.status() == WL_CONNECTED) {
+    _OTA_running = true;
+  } else {
+    _OTA_running = false;
+  }
+  return _OTA_running;
 }
 
 inline bool OTA_running() {
