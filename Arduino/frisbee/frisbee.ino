@@ -53,14 +53,14 @@ enum Animation {
 
   NumOfAnimations
 };
-enum Animation currentAnim = ReversedDots;
-long changeAfterXms = 45000;
+enum Animation currentAnim = SineRotation;
+long changeAfterXms = 120000;
 long lastChangeTime = 0;
 long seed = 42;
 long tmp1 = 0;
 
 boolean showCollision = true;
-boolean switchOnCollision = false;
+boolean switchOnCollision = true;
 #define COLLISION_THRESH 30000l
 
 #define GLOW_BRIGHTNESS 17
