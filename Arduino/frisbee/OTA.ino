@@ -6,11 +6,16 @@
 #include "OTACredentials.h"
 
 bool _OTA_running = false;
+bool _OTA_connected = false;
+
+size_t wifiIdx = 0;
 
 void OTA_setup() {
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssids[0], passwords[0]);
+  Serial.print("Trying to connect to ");
+  Serial.println(ssids[0]);
 
   ArduinoOTA.setHostname("Frisbee");
   ArduinoOTA.setPassword(NULL);
@@ -47,6 +52,7 @@ void OTA_setup() {
 }
 
 inline bool OTA_check() {
+  Serial.println("OTA_check()");
   if (WiFi.status() == WL_CONNECTED) {
     _OTA_running = true;
   } else {
@@ -65,10 +71,31 @@ inline void OTA_stop() {
 
 inline void OTA_loop() {
   if (_OTA_running) {
-    if (WiFi.status() == WL_CONNECTED) {
+    if (WiFi.status() == WL_NO_SSID_AVAIL) {
+      Serial.print("Wifi network ");
+      Serial.print(ssids[wifiIdx]);
+      Serial.println(" not available");
+      wifiIdx++;
+      if (wifiIdx < num_ssids) {
+        WiFi.begin(ssids[wifiIdx], passwords[wifiIdx]);
+        Serial.print("Trying to connect to ");
+        Serial.println(ssids[wifiIdx]);
+        ArduinoOTA.begin();
+      } else {
+        _OTA_running = false;
+        Serial.println("Giving OTA up");
+      }
+    } else if (WiFi.status() == WL_CONNECTED) {
+      if (!_OTA_connected) {
+        Serial.print("Connected to ");
+        Serial.println(ssids[wifiIdx]);
+        _OTA_connected = true;
+      }
       ArduinoOTA.handle();
+    } else if (WiFi.status() == WL_DISCONNECTED) {
+      ;
     } else {
-      _OTA_running = false;
+      Serial.println(WiFi.status());
     }
   }
 }

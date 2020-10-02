@@ -99,7 +99,8 @@ void err(uint32_t color, int seconds = 10) {
 
 void setup() {
   WiFi.mode(WIFI_OFF);
-  
+  Serial.begin(9600);
+
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   strip.setPixelColor(0, 32, 0, 0); // begin boot animation before wifi setup
@@ -143,14 +144,13 @@ void setup() {
   Wire.endTransmission(false);
   Wire.requestFrom((uint8_t) MPU_addr,(size_t) 1,true);  // request a total of 14 registers
   int ACCEL_CONFIG = Wire.read();
-  Serial.begin(9600);
   Serial.print("GYRO_CONFIG: ");
   Serial.println(GYRO_CONFIG);
   Serial.print("ACCEL_CONFIG: ");
   Serial.println(ACCEL_CONFIG);
   if (GYRO_CONFIG == -1 || ACCEL_CONFIG == -1) err(0x7f0000); // Sensor setup failed, maybe hardware issue.
 
-  if (!OTA_check())
+  if (!OTA_running())
     CP_setup();
 
   lastTime = micros(); // µs
