@@ -38,6 +38,7 @@ void CP_setup() {
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
   WiFi.softAP("Frisbee Settings");
+  WiFi.hostname("Frisbee");
 
   // if DNSServer is started with "*" for domain name, it will reply with
   // provided IP to all DNS request

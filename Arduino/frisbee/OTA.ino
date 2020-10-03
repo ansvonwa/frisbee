@@ -14,6 +14,7 @@ void OTA_setup() {
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssids[0], passwords[0]);
+  WiFi.hostname("Frisbee");
   Serial.print("Trying to connect to ");
   Serial.println(ssids[0]);
 
