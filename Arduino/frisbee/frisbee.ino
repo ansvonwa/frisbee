@@ -153,6 +153,8 @@ void setup() {
   if (!OTA_running())
     CP_setup();
 
+  Srv_setup();
+
   lastTime = micros(); // µs
   lastChangeTime = lastTime;
   firstLoopTime = lastTime;
@@ -439,6 +441,7 @@ void loop() {
   if (!OTA_running && !CP_running)
     CP_setup();
   CP_loop();
+  Srv_loop();
   delay(2); // ms
 
   nIter++;
