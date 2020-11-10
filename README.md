@@ -26,7 +26,7 @@ This is the documentation and implementation of a frisbee with an LED stripe to 
 - Glue the battery close to the center of the disc. Keep in mind that the disc deforms on impact and very high accelerations act on the disc at the same moment. Covering the four corners worked for me.
 - Glue the MPU6050 close to the center, but not right in it (2-3 cm should be good), when the disc is spun with more then 5.5 rotations/s, the limit of the gyroscope is reached. Then, the centrifugal force can be measured by the accelerometer and used to calculate the rotational speed.
 - Fix everything else.
-- You may want to cover the electornics by a piece of cardboard of similar.
+- You may want to cover the electronics by a piece of cardboard or similar.
 
 
 # Software
